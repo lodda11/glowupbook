@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>GLOW UP // Danmark-kjør</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --pitch:#132019;
+    --pitch-2:#1c2e24;
+    --paper:#EDEFE7;
+    --card:#FFFFFF;
+    --ink:#14201A;
+    --ink-soft:#4b5750;
+    --line:#c9cdbf;
+    --gold:#C69A1F;
+    --gold-soft:#f0e2b8;
+    --rust:#9C3B2B;
+    --rust-soft:#f3ddd6;
+    --pine:#3E6B52;
+    --pine-soft:#dce9e0;
+    --shadow: 0 2px 10px rgba(19,32,25,0.08);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
+  html,body{margin:0; padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter', system-ui, sans-serif;
+    padding-bottom:88px;
+    min-height:100vh;
+  }
+  .app{ max-width:480px; margin:0 auto; position:relative; }
+
+  /* HEADER */
+  .topbar{
+    background:var(--pitch);
+    color:var(--paper);
+    padding:18px 18px 22px;
+    border-radius:0 0 22px 22px;
+    position:relative;
+    overflow:hidden;
+  }
+  .topbar::after{
+    content:"";
+    position:absolute; right:-40px; top:-40px; width:160px; height:160px;
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(198,154,31,0.18), transparent 70%);
+  }
+  .topbar .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px; letter-spacing:.12em; text-transform:uppercase;
+    color:#9fb0a4; margin:0 0 2px;
+  }
+  .topbar h1{
+    font-family:'Oswald', sans-serif;
+    font-weight:700; letter-spacing:.01em;
+    font-size:22px; margin:0 0 14px; text-transform:uppercase;
+  }
+  .datebar{
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .datebar .datetxt{ font-size:13px; color:#d7ddd7; }
+  .datebar .datetxt b{ color:#fff; font-weight:600; }
+  .gear{
+    width:32px; height:32px; border-radius:50%;
+    background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15);
+    display:flex; align-items:center; justify-content:center;
+    color:#d7ddd7; cursor:pointer; font-size:15px;
+  }
+
+  /* PATCH (signature element) */
+  .patchwrap{ display:flex; gap:14px; align-items:center; margin-top:16px; }
+  .patch{
+    width:66px; height:66px; border-radius:14px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    font-family:'Oswald', sans-serif; flex-shrink:0;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+    border:2px solid rgba(255,255,255,0.35);
+  }
+  .patch .num{ font-size:26px; font-weight:700; line-height:1; }
+  .patch .lbl{ font-size:8px; letter-spacing:.08em; text-transform:uppercase; margin-top:2px; opacity:.85;}
+  .patchinfo .day-name{ font-family:'Oswald', sans-serif; font-size:17px; font-weight:600; color:#fff; text-transform:uppercase; letter-spacing:.02em;}
+  .patchinfo .day-focus{ font-size:12.5px; color:#c7cec8; margin-top:3px; line-height:1.4; }
+
+  /* SECTIONS / CARDS */
+  .content{ padding:16px 16px 8px; }
+  .view{ display:none; }
+  .view.active{ display:block; }
+
+  .section-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--ink-soft); margin:22px 4px 8px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .section-label::after{ content:""; flex:1; height:1px; background:var(--line); }
+  .section-label:first-child{ margin-top:4px; }
+
+  .card{
+    background:var(--card);
+    border-radius:16px;
+    padding:16px;
+    margin-bottom:10px;
+    box-shadow:var(--shadow);
+    border:1px solid rgba(19,32,25,0.05);
+  }
+  .card h3{
+    font-family:'Oswald', sans-serif; font-size:15px; font-weight:600;
+    margin:0 0 8px; text-transform:uppercase; letter-spacing:.01em;
+    display:flex; align-items:center; gap:8px;
+  }
+  .card p{ font-size:13.5px; line-height:1.55; color:var(--ink-soft); margin:0 0 8px; }
+  .card p:last-child{ margin-bottom:0; }
+  .tag{
+    display:inline-block; font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px; font-weight:600; padding:3px 8px; border-radius:20px;
+    letter-spacing:.03em; text-transform:uppercase;
+  }
+  .tag.gold{ background:var(--gold-soft); color:#7a5f10; }
+  .tag.rust{ background:var(--rust-soft); color:var(--rust); }
+  .tag.pine{ background:var(--pine-soft); color:var(--pine); }
+
+  /* checklist rows */
+  .check-row{
+    display:flex; align-items:center; gap:12px;
+    padding:10px 0; border-bottom:1px solid var(--line);
+  }
+  .check-row:last-child{ border-bottom:none; }
+  .check-row .txt{ flex:1; font-size:13.5px; }
+  .check-row .txt small{ display:block; color:var(--ink-soft); font-size:11.5px; margin-top:1px; }
+  .box{
+    width:24px; height:24px; border-radius:7px; border:2px solid var(--line);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    cursor:pointer; transition: all .15s ease; background:#fff;
+  }
+  .box.on{ background:var(--pine); border-color:var(--pine); }
+  .box.on::after{ content:"✓"; color:#fff; font-size:14px; font-weight:700; }
+  .check-row.done .txt{ color:var(--ink-soft); text-decoration:line-through; text-decoration-color:var(--line); }
+
+  /* accordion for training days / weekly tables */
+  .acc{
+    background:var(--card); border-radius:16px; margin-bottom:10px;
+    box-shadow:var(--shadow); overflow:hidden; border:1px solid rgba(19,32,25,0.05);
+  }
+  .acc-head{
+    display:flex; align-items:center; gap:12px; padding:14px 16px; cursor:pointer;
+  }
+  .acc-num{
+    width:34px; height:34px; border-radius:9px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Oswald', sans-serif; font-weight:700; font-size:15px; color:#fff;
+  }
+  .acc-head .t{ flex:1; }
+  .acc-head .t .name{ font-family:'Oswald', sans-serif; font-size:14.5px; font-weight:600; text-transform:uppercase; }
+  .acc-head .t .sub{ font-size:11.5px; color:var(--ink-soft); margin-top:1px; }
+  .acc-chevron{ font-size:13px; color:var(--ink-soft); transition: transform .2s ease; }
+  .acc.open .acc-chevron{ transform:rotate(180deg); }
+  .acc-body{ display:none; padding:0 16px 16px; }
+  .acc.open .acc-body{ display:block; }
+  .whoop-row{ display:flex; gap:6px; margin:2px 0 12px; flex-wrap:wrap; }
+  .whoop-chip{ font-family:'IBM Plex Mono', monospace; font-size:10px; padding:4px 8px; border-radius:8px; line-height:1.3; }
+  .ex-row{
+    display:flex; align-items:flex-start; gap:10px; padding:9px 0; border-top:1px solid var(--line);
+  }
+  .ex-row .box{ margin-top:2px; }
+  .ex-row .t{ flex:1; }
+  .ex-row .t .name{ font-size:13px; font-weight:500; }
+  .ex-row .t .meta{ font-size:11.5px; color:var(--ink-soft); margin-top:1px; }
+
+  /* weekday chip grid for skincare/hair schedule */
+  .weekgrid{ display:grid; grid-template-columns:repeat(7,1fr); gap:6px; margin:6px 0 4px; }
+  .weekgrid .d{
+    border-radius:10px; padding:8px 2px 7px; text-align:center;
+    font-family:'IBM Plex Mono', monospace;
+  }
+  .weekgrid .d .dn{ font-size:9.5px; text-transform:uppercase; opacity:.8; display:block; }
+  .weekgrid .d .di{ font-size:15px; margin-top:3px; display:block; }
+  .weekgrid .d.today{ outline:2px solid var(--pitch); outline-offset:2px; }
+
+  ol.steps, ul.plainlist{ margin:0; padding-left:20px; }
+  ol.steps li, ul.plainlist li{ font-size:13.5px; line-height:1.6; color:var(--ink); margin-bottom:6px; }
+  ul.plainlist{ list-style:none; padding-left:0; }
+  ul.plainlist li{ padding-left:16px; position:relative; }
+  ul.plainlist li::before{ content:"—"; position:absolute; left:0; color:var(--gold); }
+
+  table.rt{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  table.rt th{ text-align:left; font-family:'IBM Plex Mono', monospace; font-size:10px; text-transform:uppercase; color:var(--ink-soft); padding:6px 4px; border-bottom:1px solid var(--line); }
+  table.rt td{ padding:8px 4px; border-bottom:1px solid var(--line); vertical-align:top; }
+  table.rt tr:last-child td{ border-bottom:none; }
+
+  .callout{
+    border-radius:14px; padding:12px 14px; font-size:12.5px; line-height:1.5;
+    margin-bottom:14px; border:1px solid transparent;
+  }
+  .callout.warn{ background:var(--rust-soft); color:#7a2c1f; border-color:#e6bfb4;}
+  .callout.info{ background:var(--pine-soft); color:#2c4d3b; border-color:#c4dbcd;}
+  .callout b{ font-weight:700; }
+
+  /* BOTTOM NAV */
+  .navbar{
+    position:fixed; bottom:0; left:0; right:0;
+    background:var(--pitch); border-top:1px solid rgba(255,255,255,0.06);
+    display:flex; justify-content:space-around;
+    padding:8px 4px calc(8px + env(safe-area-inset-bottom));
+    max-width:480px; margin:0 auto;
+    z-index:50;
+  }
+  .navbtn{
+    display:flex; flex-direction:column; align-items:center; gap:3px;
+    background:none; border:none; color:#8ea394; cursor:pointer;
+    font-family:'IBM Plex Mono', monospace; font-size:9.5px; letter-spacing:.02em;
+    padding:6px 8px; text-transform:uppercase; flex:1;
+  }
+  .navbtn .ic{ font-size:17px; line-height:1; }
+  .navbtn.active{ color:var(--gold); }
+
+  /* settings modal */
+  .modal-bg{
+    position:fixed; inset:0; background:rgba(19,32,25,0.55);
+    display:none; align-items:flex-end; justify-content:center; z-index:100;
+  }
+  .modal-bg.open{ display:flex; }
+  .modal{
+    background:var(--paper); border-radius:20px 20px 0 0; padding:20px 20px 28px;
+    width:100%; max-width:480px;
+  }
+  .modal h3{ font-family:'Oswald', sans-serif; text-transform:uppercase; margin:0 0 12px; font-size:15px;}
+  .modal label{ font-size:12px; color:var(--ink-soft); display:block; margin-bottom:6px; font-family:'IBM Plex Mono', monospace;}
+  .modal input[type=date]{
+    width:100%; padding:10px 12px; border-radius:10px; border:1px solid var(--line);
+    font-family:'Inter'; font-size:14px; margin-bottom:14px; background:#fff; color:var(--ink);
+  }
+  .modal button.close{
+    width:100%; background:var(--pitch); color:#fff; border:none; padding:12px;
+    border-radius:12px; font-family:'Oswald'; text-transform:uppercase; font-size:13px; letter-spacing:.03em;
+    cursor:pointer;
+  }
+  .modal .note{ font-size:11.5px; color:var(--ink-soft); margin-bottom:14px; line-height:1.5; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="topbar">
+    <p class="eyebrow" id="eyebrow">DANMARK-KJØR</p>
+    <h1>Glow Up Kontroll</h1>
+    <div class="datebar">
+      <div class="datetxt"><b id="dateBig">–</b><br><span id="dateSmall"></span></div>
+      <div class="gear" id="gearBtn">⚙</div>
+    </div>
+    <div class="patchwrap">
+      <div class="patch" id="dayPatch">
+        <div class="num" id="dayNum">–</div>
+        <div class="lbl">DAG</div>
+      </div>
+      <div class="patchinfo">
+        <div class="day-name" id="dayName">–</div>
+        <div class="day-focus" id="dayFocus">–</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ============ VIEW: TODAY ============ -->
+    <div class="view active" id="view-today">
+
+      <div class="section-label">Dagens sjekkliste</div>
+      <div class="card" id="checklistCard"></div>
+
+      <div class="section-label">Trening i dag</div>
+      <div class="card" id="todayTrainingCard"></div>
+
+      <div class="section-label">Hår i dag</div>
+      <div class="card" id="todayHairCard"></div>
+
+      <div class="section-label">Hud i dag</div>
+      <div class="card" id="todaySkinCard"></div>
+
+    </div>
+
+    <!-- ============ VIEW: TRENING ============ -->
+    <div class="view" id="view-trening">
+      <div class="section-label">6-dagers syklus</div>
+      <div class="callout info"><b>Whoop styrer rattet.</b> Grønn = kjør på. Gul = gjør økta, dempet. Rød = bytt til Dag 6 uansett hva planen sier.</div>
+      <div id="trainingAccordions"></div>
+    </div>
+
+    <!-- ============ VIEW: HUD ============ -->
+    <div class="view" id="view-hud">
+      <div class="section-label">Morgenrutine</div>
+      <div class="card">
+        <ol class="steps">
+          <li>Skyll ansiktet med lunkent vann, ikke varmt</li>
+          <li>Fuktighetskrem, rolig og uten actives om morgenen</li>
+          <li>Solkrem hvis du er ute mye, ekstra viktig i uker du kjører syre</li>
+        </ol>
+      </div>
+
+      <div class="section-label">Kveldsrutine</div>
+      <div class="card">
+        <ol class="steps">
+          <li>Vask ansiktet, mild rens</li>
+          <li>På syre-dager: BHA-serum <b>eller</b> Garnier PureActive, aldri begge samme kveld</li>
+          <li>Fuktighetskrem for å balansere etter syre</li>
+          <li>Ikke-syre-dager: bare vask og krem, hold det enkelt</li>
+        </ol>
+      </div>
+
+      <div class="section-label">Syre-skjema</div>
+      <div class="card">
+        <p>Spredt over uken, aldri to syre-dager på rad.</p>
+        <div class="weekgrid" id="acidGrid"></div>
+        <div class="callout warn" style="margin-top:12px;"><b>2-ukers test:</b> mer rødme eller flere kviser enn vanlig? Dropp Garnier-dagen til 1x/uke. Betent hud trenger ikke aggressive actives.</div>
+      </div>
+
+      <div class="section-label">Regler</div>
+      <div class="card">
+        <ul class="plainlist">
+          <li>Aldri BHA-serum og Garnier samme kveld, det er dobbel syre + scrub</li>
+          <li>Aldri to syre-dager på rad</li>
+          <li>Garnier-tuben er 1-2x/uke behandling, ikke daglig vask</li>
+          <li>Solkrem er ekstra viktig i uker du kjører syre</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ============ VIEW: HÅR ============ -->
+    <div class="view" id="view-har">
+      <div class="section-label">Vaskedager</div>
+      <div class="card">
+        <p>Lørdag og onsdag. 2x/uke er nok, daglig vask tørker ut bølgene dine.</p>
+        <div class="weekgrid" id="hairGrid"></div>
+      </div>
+
+      <div class="section-label">Lørdag – vask + hair mask</div>
+      <div class="card">
+        <ol class="steps">
+          <li>Redken All Soft sjampo</li>
+          <li>Curl Girl Hair Mask i stedet for balsam, la virke noen minutter</li>
+          <li>Skyll grundig</li>
+          <li>Curl Girl Curling Mousse på vått hår, scrunch, ikke rake</li>
+          <li>Air dry, ikke rør mens det tørker</li>
+        </ol>
+      </div>
+
+      <div class="section-label">Onsdag – vask + balsam</div>
+      <div class="card">
+        <ol class="steps">
+          <li>Redken All Soft sjampo</li>
+          <li>Redken All Soft balsam, eller Curl Girl Conditioner Foam når Redken leave-in er tom</li>
+          <li>Skyll grundig</li>
+          <li>Curl Girl Curling Mousse på vått hår, scrunch, ikke rake</li>
+          <li>Air dry</li>
+        </ol>
+      </div>
+
+      <div class="section-label">Andre dager</div>
+      <div class="card">
+        <ol class="steps">
+          <li>Skyll med vann, ikke sjampo</li>
+          <li>Litt Curling Mousse for å restylé bølgene</li>
+          <li>Air dry</li>
+        </ol>
+      </div>
+
+      <div class="section-label">Produktoversikt</div>
+      <div class="card">
+        <table class="rt">
+          <tr><th>Produkt</th><th>Bruk</th></tr>
+          <tr><td>Redken All Soft sjampo</td><td>Vaskedager</td></tr>
+          <tr><td>Redken All Soft balsam</td><td>Onsdag</td></tr>
+          <tr><td>Curl Girl Hair Mask</td><td>Lørdag, i stedet for balsam</td></tr>
+          <tr><td>Curl Girl Curling Mousse</td><td>Hovedprodukt, hver vaskedag</td></tr>
+          <tr><td>Curl Girl Conditioner Foam</td><td>Reserve når Redken leave-in tar slutt</td></tr>
+        </table>
+        <div class="callout warn" style="margin-top:12px;">Ikke kjøp flere leave-in/gel-produkter oppå hverandre. Kjør Curl Girl-settet tomt før du legger til noe nytt.</div>
+      </div>
+    </div>
+
+    <!-- ============ VIEW: MAT ============ -->
+    <div class="view" id="view-mat">
+      <div class="callout info"><b>Du bygger muskel, ikke cutter.</b> Spis mer, ikke mindre, men velg riktige kilder så huden og magen ikke betaler prisen.</div>
+
+      <div class="section-label">Protein – hvert måltid, ~2g/kg</div>
+      <div class="card">
+        <ul class="plainlist">
+          <li>Egg, kylling, magert til medium kjøtt</li>
+          <li>Fisk, bonus omega-3 for huden</li>
+          <li>Skyr, kvarg, cottage cheese</li>
+          <li>Proteinpulver</li>
+        </ul>
+      </div>
+
+      <div class="section-label">Godt for huden</div>
+      <div class="card">
+        <table class="rt">
+          <tr><td><b>Fet fisk</b><br><span style="color:var(--ink-soft)">laks, makrell, sild</span></td><td>Omega-3 demper betennelse, relevant for akne</td></tr>
+          <tr><td><b>Bladgrønt, bær</b></td><td>Antioksidanter, hjelper mot PIE</td></tr>
+          <tr><td><b>Nøtter, frø</b></td><td>Sink og omega-3 for hudreparasjon</td></tr>
+          <tr><td><b>Vann, 2-3L/dag</b></td><td>Huden får vann sist hvis du er dehydrert</td></tr>
+          <tr><td><b>Fermentert mat</b><br><span style="color:var(--ink-soft)">skyr, kimchi, surkål</span></td><td>Tarmflora, koblet til mindre hud-inflammasjon</td></tr>
+        </table>
+      </div>
+
+      <div class="section-label">Begrens – vanligste breakout-triggerne</div>
+      <div class="card">
+        <table class="rt">
+          <tr><td><b>Melk</b><br><span style="color:var(--ink-soft)">spesielt lettmelk</span></td><td>Koblet til akne hos mange. Bytt mot skyr/kvarg for protein</td></tr>
+          <tr><td><b>Raffinert sukker</b></td><td>Høy glykemisk belastning. Ikke kutt karbo, prioriter havre/ris foran godteri</td></tr>
+          <tr><td><b>Mye fritert mat</b></td><td>Høyt omega-6 kan skyve betennelse opp</td></tr>
+          <tr><td><b>Alkohol</b></td><td>Dehydrerer huden, forstyrrer søvnen der huden reparerer seg</td></tr>
+        </table>
+      </div>
+
+      <div class="section-label">Bloating</div>
+      <div class="card">
+        <ul class="plainlist">
+          <li>Siste store måltid 2-3t før leggetid</li>
+          <li>Begrens kullsyre og tyggegummi rundt trening/kveld</li>
+          <li>Spis rolig, sluking gir mer luft enn maten selv</li>
+          <li>Spre rå kål/brokkoli/bønner over dagen, ikke alt i ett måltid</li>
+          <li>Nok vann, for lite vann gjør fordøyelsen tregere</li>
+        </ul>
+      </div>
+
+      <div class="section-label">Timing</div>
+      <div class="card">
+        <table class="rt">
+          <tr><td><b>Frokost</b></td><td>Stor, etter morgenløp, hovedmåltid 1</td></tr>
+          <tr><td><b>Før fotball</b></td><td>Karbo + protein, ikke tren tungt på tom mage</td></tr>
+          <tr><td><b>Etter trening</b></td><td>Protein innen rimelig tid</td></tr>
+          <tr><td><b>Kveld</b></td><td>Protein + karbo, men 2-3t før leggetid</td></tr>
+        </table>
+      </div>
+
+      <div class="section-label">Flytende kalorier</div>
+      <div class="card">
+        <p>Smoothie: banan, havre, peanøttsmør, melk (eller plantebasert hvis melk gir breakouts), proteinpulver, bær. 600-800 lette kalorier, en om dagen flytter nåla uten stappmett mage.</p>
+      </div>
+
+      <div class="section-label">Sjekk annenhver uke</div>
+      <div class="card">
+        <p>Ikke mer fyldig og vekta stille etter 2 uker? Spis mer, ikke tren mer. Huden verre samtidig? Se på melk og sukker først, ikke karbo generelt.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="navbar">
+  <button class="navbtn active" data-view="today"><span class="ic">●</span>I DAG</button>
+  <button class="navbtn" data-view="trening"><span class="ic">▲</span>TRENING</button>
+  <button class="navbtn" data-view="hud"><span class="ic">◆</span>HUD</button>
+  <button class="navbtn" data-view="har"><span class="ic">≈</span>HÅR</button>
+  <button class="navbtn" data-view="mat"><span class="ic">■</span>MAT</button>
+</div>
+
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h3>Innstillinger</h3>
+    <label for="startDateInput">Programstart (Dag 1 var)</label>
+    <input type="date" id="startDateInput">
+    <p class="note">Alt annet i appen regner seg selv ut fra denne datoen. Endre kun hvis Dag 1 faktisk var en annen dag.</p>
+    <button class="close" id="closeModal">Lagre og lukk</button>
+  </div>
+</div>
+
+<script>
+const DAY_COLORS = ["#C69A1F","#3E6B52","#6B4F3B","#9C3B2B","#1c2e24","#4a5a52"];
+const WEEKDAY_NAMES = ["Mandag","Tirsdag","Onsdag","Torsdag","Fredag","Lørdag","Søndag"];
+
+const trainingDays = [
+  { name:"Dag 1 – Push", focus:"Bryst, skulder, triceps + lett sprint-oppvarming", note:"Moderat, går fint på gul recovery",
+    whoop:[["Grønn","Full økt + push sprintene"],["Gul","Kutt sprint til 3 drag"],["Rød","Mobilitet + lett touch"]],
+    ex:[["Dynamisk mobilitet + stigningsløp","5 min"],["Korte akselerasjoner","4-5 x 20m"],["Push-ups (vanlig)","4 x nær failure"],["Diamant push-ups","3 x nær failure"],["Pike push-ups","3 x 8-12"],["Dekline push-ups","3 x 10-12"],["Bench dips","3 x 12-15"],["Ettermiddag valgfritt","M-station / golf / chill"]] },
+  { name:"Dag 2 – Pull", focus:"Rygg, biceps, bakre skulder. Kjøp bands, denne dagen dobler seg da.", note:"Lett belastning, tar lite ut av beina",
+    whoop:[["Grønn","Full økt"],["Gul","Behold, 3 sett"],["Rød","Mobilitet + lett touch"]],
+    ex:[["Oppvarming","5 min"],["Superman back extension","4 x 15"],["Superman swimmers","3 x 20"],["Reverse snow angels","3 x 15"],["Prone Y-T-W raises","3 x 10 hver"],["Doorway rows","3 x maks"],["Bordrows","3 x maks, hvis mulig"]] },
+  { name:"Dag 3 – Legs", focus:"Bein, rumpe, legg. Ingen sprint, ferske til Dag 5.", note:"Tyngst for beina, press ikke gjennom rødt",
+    whoop:[["Grønn","Full økt, nær failure"],["Gul","3 sett, dropp Nordics"],["Rød","Flytt til neste grønne dag"]],
+    ex:[["Oppvarming","7 min"],["Bulgarian split squat","4 x 12-15/bein"],["Dype knebøy (3s ned)","4 x 20"],["Walking lunges","3 x 15/bein"],["Nordic hamstring","3 x 5"],["Single-leg glute bridge","3 x 15/bein"],["Single-leg calf raise","3 x 20/bein"],["Wall sit","3 x maks tid"],["Ettermiddag","Lett golf-gåing, ikke hard fotball"]] },
+  { name:"Dag 4 – Core", focus:"Core + nedre rygg, din svakhet. Kort økt, fotball etter.", note:"Lett totalt, går på all recovery",
+    whoop:[["Grønn","Full core + full skuddøkt"],["Gul","Full core, roligere fotball"],["Rød","Bare core + mobilitet"]],
+    ex:[["Dead bug","3 x 10/side"],["Bird-dog","3 x 10/side"],["Hollow hold","3 x 30-45s"],["Side plank + reach-through","3 x 30s/side"],["Plank shoulder taps","3 x 20 taps"],["Hollow rocks","3 x 15"],["Superman hold","3 x 30s"],["Fotball skudd","40-50 skudd, 45 min"]] },
+  { name:"Dag 5 – Fart", focus:"Hovedsprintdag. Sprint FØRST, alltid, full innsats, full pause.", note:"Ferske bein avgjør alt, utsett hvis rødt",
+    whoop:[["Grønn","Full sprintøkt"],["Gul","4-5 drag"],["Rød","Utsett, kjør Dag 6"]],
+    ex:[["Oppvarming","10 min, ikke skip"],["Akselerasjoner","6-8 x 20-30m"],["Flying sprints","4 x 30m"],["Repeat sprint","8-10 x 20m"],["Agility 5-10-5, L-drill","5-6 reps"],["Broad jumps","4 x 5"],["Bounding","3 x 20m"],["Jump squats","4 x 8"],["Single-leg bounds","3 x 6/bein"],["Explosive step-ups","3 x 8/bein"]] },
+  { name:"Dag 6 – Recovery", focus:"Aktiv hvile + golf, ingen tung styrke.", note:"Recovery skal stige til neste runde",
+    whoop:[["Grønn","Golf + mobilitet"],["Gul","Lett golf eller mobilitet"],["Rød","Full hvile"]],
+    ex:[["Rolig løp med hund","valgfritt"],["Golf-runde eller range","active recovery"],["World's greatest stretch","5/side"],["90/90 hofterotasjon","10/side"],["Ankel mot vegg","10/side"],["Thoracic rotasjon","10/side"],["Couch stretch","60s/side"],["Ingen tung styrke","-"]] }
+];
+
+// weekday index 0=Mon..6=Sun
+const acidSchedule = ["BHA","–","Charcoal","–","BHA","–","Charcoal"];
+const hairSchedule  = ["–","–","Vask","–","–","Vask","–"];
+
+async function sget(key){
+  try{ const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : null; }catch(e){ return null; }
+}
+async function sset(key,val){
+  try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){}
+}
+
+function todayKey(){
+  const d = new Date();
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function mondayIndex(d){ return (d.getDay()+6)%7; } // 0=Mon
+function fmtDate(d){
+  return d.getDate()+"."+(d.getMonth()+1)+"."+d.getFullYear();
+}
+
+let startDate = null;
+
+async function init(){
+  const savedStart = await sget("settings:startdate");
+  if(savedStart){ startDate = new Date(savedStart); }
+  else { startDate = new Date(); await sset("settings:startdate", startDate.toISOString().slice(0,10)); }
+  document.getElementById("startDateInput").value = startDate.toISOString().slice(0,10);
+
+  renderHeader();
+  renderToday();
+  renderTraining();
+  renderAcidGrid();
+  renderHairGrid();
+  bindNav();
+  bindModal();
+}
+
+function dayIndexFromStart(){
+  const now = new Date(); now.setHours(0,0,0,0);
+  const start = new Date(startDate); start.setHours(0,0,0,0);
+  const diff = Math.floor((now-start)/86400000);
+  let idx = diff % 6; if(idx<0) idx+=6;
+  return idx; // 0-5
+}
+
+function renderHeader(){
+  const now = new Date();
+  document.getElementById("dateBig").textContent = fmtDate(now);
+  document.getElementById("dateSmall").textContent = WEEKDAY_NAMES[mondayIndex(now)];
+  const di = dayIndexFromStart();
+  const d = trainingDays[di];
+  document.getElementById("dayNum").textContent = di+1;
+  document.getElementById("dayPatch").style.background = DAY_COLORS[di];
+  document.getElementById("dayName").textContent = d.name;
+  document.getElementById("dayFocus").textContent = d.focus;
+}
+
+async function checkRow(container, key, label, sub){
+  const row = document.createElement("div");
+  row.className = "check-row";
+  const box = document.createElement("div");
+  box.className = "box";
+  const txt = document.createElement("div");
+  txt.className = "txt";
+  txt.innerHTML = label + (sub? "<small>"+sub+"</small>" : "");
+  row.appendChild(box); row.appendChild(txt);
+  container.appendChild(row);
+
+  const val = await sget(key);
+  if(val){ box.classList.add("on"); row.classList.add("done"); }
+
+  box.addEventListener("click", async ()=>{
+    const on = box.classList.toggle("on");
+    row.classList.toggle("done", on);
+    await sset(key, on);
+  });
+}
+
+async function renderToday(){
+  const di = dayIndexFromStart();
+  const d = trainingDays[di];
+  const tk = todayKey();
+
+  const cl = document.getElementById("checklistCard");
+  cl.innerHTML = "";
+  await checkRow(cl, "chk:"+tk+":trening", "Trening gjort");
+  await checkRow(cl, "chk:"+tk+":hudam", "Skincare morgen");
+  await checkRow(cl, "chk:"+tk+":hudpm", "Skincare kveld");
+  await checkRow(cl, "chk:"+tk+":protein", "Nok protein i dag");
+  await checkRow(cl, "chk:"+tk+":vann", "2-3L vann");
+
+  const wIdx = mondayIndex(new Date());
+  if(hairSchedule[wIdx]==="Vask"){
+    await checkRow(cl, "chk:"+tk+":har", "Hår-rutine gjort");
+  }
+
+  const tc = document.getElementById("todayTrainingCard");
+  tc.innerHTML = `<h3>${d.name}</h3><p>${d.focus}</p>
+    <div class="whoop-row">${d.whoop.map(w=>`<span class="whoop-chip" style="background:${w[0]==="Grønn"?"var(--pine-soft)":w[0]==="Gul"?"var(--gold-soft)":"var(--rust-soft)"};color:${w[0]==="Grønn"?"var(--pine)":w[0]==="Gul"?"#7a5f10":"var(--rust)"}">${w[0]}: ${w[1]}</span>`).join("")}</div>
+    <p style="font-size:12px;color:var(--ink-soft);margin-top:2px;">Se «Trening»-fanen for full øvelsesliste.</p>`;
+
+  const hairCard = document.getElementById("todayHairCard");
+  const washToday = hairSchedule[wIdx]==="Vask";
+  hairCard.innerHTML = washToday
+    ? `<h3>Vaskedag <span class="tag pine">Ja</span></h3><p>${WEEKDAY_NAMES[wIdx]==="Lørdag"?"Sjampo + Curl Girl Hair Mask + Curling Mousse.":"Sjampo + balsam + Curling Mousse."} Se «Hår»-fanen for steg.</p>`
+    : `<h3>Vaskedag <span class="tag">Nei</span></h3><p>Skyll med vann, litt Curling Mousse for å restylé bølgene.</p>`;
+
+  const skinCard = document.getElementById("todaySkinCard");
+  const acid = acidSchedule[wIdx];
+  skinCard.innerHTML = acid==="–"
+    ? `<h3>Syre <span class="tag pine">Fri</span></h3><p>Bare vask og fuktighetskrem morgen og kveld.</p>`
+    : `<h3>Syre <span class="tag rust">${acid}</span></h3><p>${acid==="BHA"?"Kjør ditt vanlige BHA-serum i kveldsrutinen.":"Garnier PureActive BHA Charcoal som vask/scrub/maske i kveld."} Ikke stable med det andre produktet.</p>`;
+}
+
+function renderTraining(){
+  const wrap = document.getElementById("trainingAccordions");
+  wrap.innerHTML = "";
+  const di = dayIndexFromStart();
+  trainingDays.forEach((d,i)=>{
+    const acc = document.createElement("div");
+    acc.className = "acc" + (i===di ? " open" : "");
+    acc.innerHTML = `
+      <div class="acc-head">
+        <div class="acc-num" style="background:${DAY_COLORS[i]}">${i+1}</div>
+        <div class="t"><div class="name">${d.name}${i===di?" · I dag":""}</div><div class="sub">${d.note}</div></div>
+        <div class="acc-chevron">▾</div>
+      </div>
+      <div class="acc-body">
+        <p style="font-size:12.5px;color:var(--ink-soft);margin:0 0 10px;">${d.focus}</p>
+        <div class="whoop-row">${d.whoop.map(w=>`<span class="whoop-chip" style="background:${w[0]==="Grønn"?"var(--pine-soft)":w[0]==="Gul"?"var(--gold-soft)":"var(--rust-soft)"};color:${w[0]==="Grønn"?"var(--pine)":w[0]==="Gul"?"#7a5f10":"var(--rust)"}">${w[0]}: ${w[1]}</span>`).join("")}</div>
+        <div class="exlist" data-day="${i}"></div>
+      </div>`;
+    acc.querySelector(".acc-head").addEventListener("click", ()=> acc.classList.toggle("open"));
+    wrap.appendChild(acc);
+
+    const exlist = acc.querySelector(".exlist");
+    d.ex.forEach((e, j)=>{
+      const row = document.createElement("div");
+      row.className = "ex-row";
+      row.innerHTML = `<div class="box"></div><div class="t"><div class="name">${e[0]}</div><div class="meta">${e[1]}</div></div>`;
+      exlist.appendChild(row);
+      const key = "ex:"+i+":"+j;
+      sget(key).then(v=>{ if(v){ row.querySelector(".box").classList.add("on"); } });
+      row.querySelector(".box").addEventListener("click", async (ev)=>{
+        const on = ev.target.classList.toggle("on");
+        await sset(key, on);
+      });
+    });
+  });
+}
+
+function renderAcidGrid(){
+  const g = document.getElementById("acidGrid");
+  g.innerHTML = "";
+  const wIdx = mondayIndex(new Date());
+  WEEKDAY_NAMES.forEach((name,i)=>{
+    const a = acidSchedule[i];
+    const div = document.createElement("div");
+    div.className = "d" + (i===wIdx? " today":"");
+    div.style.background = a==="–" ? "var(--pine-soft)" : "var(--rust-soft)";
+    div.style.color = a==="–" ? "var(--pine)" : "var(--rust)";
+    div.innerHTML = `<span class="dn">${name.slice(0,3)}</span><span class="di">${a}</span>`;
+    g.appendChild(div);
+  });
+}
+function renderHairGrid(){
+  const g = document.getElementById("hairGrid");
+  g.innerHTML = "";
+  const wIdx = mondayIndex(new Date());
+  WEEKDAY_NAMES.forEach((name,i)=>{
+    const h = hairSchedule[i];
+    const div = document.createElement("div");
+    div.className = "d" + (i===wIdx? " today":"");
+    div.style.background = h==="Vask" ? "var(--gold-soft)" : "#eceee5";
+    div.style.color = h==="Vask" ? "#7a5f10" : "var(--ink-soft)";
+    div.innerHTML = `<span class="dn">${name.slice(0,3)}</span><span class="di">${h==="Vask"?"✓":"–"}</span>`;
+    g.appendChild(div);
+  });
+}
+
+function bindNav(){
+  document.querySelectorAll(".navbtn").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      document.querySelectorAll(".navbtn").forEach(b=>b.classList.remove("active"));
+      btn.classList.add("active");
+      document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+      document.getElementById("view-"+btn.dataset.view).classList.add("active");
+    });
+  });
+}
+function bindModal(){
+  document.getElementById("gearBtn").addEventListener("click", ()=> document.getElementById("modalBg").classList.add("open"));
+  document.getElementById("closeModal").addEventListener("click", async ()=>{
+    const v = document.getElementById("startDateInput").value;
+    if(v){ startDate = new Date(v); await sset("settings:startdate", v); renderHeader(); renderToday(); renderTraining(); }
+    document.getElementById("modalBg").classList.remove("open");
+  });
+  document.getElementById("modalBg").addEventListener("click", (e)=>{ if(e.target.id==="modalBg") document.getElementById("modalBg").classList.remove("open"); });
+}
+
+init();
+</script>
+</body>
+</html>
